@@ -137,9 +137,12 @@ void ImageAnalyser::update() {
         QObject::connect(grabResult.data(), &QQuickItemGrabResult::ready, this, [grabResult, this]() {
             m_futureWatcher->setFuture(QtConcurrent::run(&ImageAnalyser::analyse, grabResult->image(), m_rescaleSize));
         });
-    } else {
+    }  else {
+        // FIX APPLIED: Load image on the Main Thread
+        const QImage image(m_source);
+
+        // Pass the loaded 'image' to the background thread
         m_futureWatcher->setFuture(QtConcurrent::run([=, this](QPromise<AnalyseResult>& promise) {
-            const QImage image(m_source);
             analyse(promise, image, m_rescaleSize);
         }));
     }
