@@ -138,11 +138,8 @@ void ImageAnalyser::update() {
             m_futureWatcher->setFuture(QtConcurrent::run(&ImageAnalyser::analyse, grabResult->image(), m_rescaleSize));
         });
     }  else {
-        // FIX APPLIED: Load image on the Main Thread
         const QImage image(m_source);
-
-        // Pass the loaded 'image' to the background thread
-        m_futureWatcher->setFuture(QtConcurrent::run([=, this](QPromise<AnalyseResult>& promise) {
+          m_futureWatcher->setFuture(QtConcurrent::run([=, this](QPromise<AnalyseResult>& promise) {
             analyse(promise, image, m_rescaleSize);
         }));
     }
